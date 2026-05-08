@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nirbhaya SafeTrack — Intelligent Safe Route Planner</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="app-header">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <path d="M9 12l2 2 4-4"/>
+                </svg>
+            </div>
+            <div class="logo-text">
+                <h1>Nirbhaya SafeTrack</h1>
+                <span class="logo-subtitle">Intelligent Safe Route Planner</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <span class="prototype-badge" title="Uses simulated urban safety datasets for demonstration">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+                Prototype
+            </span>
+            <button id="toggle-checkpoints" class="btn-ghost">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                Checkpoints
+            </button>
+            <button id="toggle-heatmap" class="btn-ghost">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                Heatmap
+            </button>
+        </div>
+    </header>
+
+    <div id="time-context-bar" class="time-context-bar">
+        <span class="time-context-icon">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+        </span>
+        <span id="time-context-text" class="time-context-text"></span>
+    </div>
+
+    <div id="safety-intelligence-bar" class="safety-intelligence-bar" style="display: none;">
+        <span class="si-pulse"></span>
+        <span class="si-label">Safety Engine Active</span>
+        <span class="si-divider">|</span>
+        <span class="si-stat">Analyzing: <strong id="si-incidents">88</strong> incidents</span>
+        <span class="si-divider">|</span>
+        <span class="si-stat"><strong id="si-zones">12</strong> zones</span>
+        <span class="si-divider">|</span>
+        <span class="si-stat"><strong id="si-risk">3</strong> high-risk</span>
+        <span class="si-divider">|</span>
+        <span class="si-stat" id="si-period">Evening conditions</span>
+    </div>
+
+    <main class="app-layout">
+        <aside class="sidebar">
+            <section class="input-panel">
+                <h2>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    Plan Your Route
+                </h2>
+                <form id="route-form">
+                    <div class="form-group">
+                        <label for="origin-search">Origin</label>
+                        <div class="search-wrapper">
+                            <input type="text" id="origin-search" placeholder="Search for a location..." autocomplete="off">
+                            <input type="hidden" id="origin" name="origin">
+                            <div class="search-dropdown" id="origin-dropdown"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="destination-search">Destination</label>
+                        <div class="search-wrapper">
+                            <input type="text" id="destination-search" placeholder="Search for a location..." autocomplete="off">
+                            <input type="hidden" id="destination" name="destination">
+                            <div class="search-dropdown" id="destination-dropdown"></div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group compact">
+                            <label for="departure-time">Time</label>
+                            <input type="time" id="departure-time" value="20:00">
+                        </div>
+                        <div class="form-group compact flex-1">
+                            <label>Mode</label>
+                            <div class="mode-selector">
+                                <label class="mode-option">
+                                    <input type="radio" name="mode" value="fastest">
+                                    <span class="mode-label">
+                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                                        Fastest
+                                    </span>
+                                </label>
+                                <label class="mode-option">
+                                    <input type="radio" name="mode" value="safest" checked>
+                                    <span class="mode-label">
+                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                        Safest
+                                    </span>
+                                </label>
+                                <label class="mode-option">
+                                    <input type="radio" name="mode" value="balanced">
+                                    <span class="mode-label">
+                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                        Balanced
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="demo-routes">
+                        <span class="demo-label">Quick routes:</span>
+                        <button type="button" class="demo-chip" data-origin="N001" data-dest="N007">Connaught Place → India Gate</button>
+                        <button type="button" class="demo-chip" data-origin="N010" data-dest="N018">Patel Chowk → Supreme Court</button>
+                        <button type="button" class="demo-chip" data-origin="N014" data-dest="N020">Paharganj → Patel Road</button>
+                    </div>
+                    <button type="submit" class="btn-primary" id="compute-btn">
+                        <svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                        <svg class="btn-spinner" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                        </svg>
+                        <span class="btn-text">Compute Routes</span>
+                    </button>
+                </form>
+            </section>
+
+            <section id="route-summary" class="route-summary" style="display: none;">
+                <h2>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                    Route Comparison
+                </h2>
+                <div id="route-summary-content" class="summary-cards"></div>
+            </section>
+
+            <div id="why-not-panel" class="why-not-panel" style="display: none;"></div>
+
+            <section class="community-feedback" id="community-feedback">
+                <h2>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    Community Pulse
+                    <span class="feedback-live-dot"></span>
+                </h2>
+                <div class="feedback-stats-bar" id="feedback-stats-bar">
+                    <span class="fs-stat" id="fs-total">0</span>
+                    <span class="fs-label">reports</span>
+                    <span class="fs-divider">|</span>
+                    <span class="fs-stat" id="fs-zones">0</span>
+                    <span class="fs-label">zones</span>
+                    <span class="fs-divider">|</span>
+                    <span class="fs-stat" id="fs-top-type">—</span>
+                    <span class="fs-label">top concern</span>
+                </div>
+                <div class="feedback-feed" id="feedback-feed">
+                    <div class="feedback-empty">Loading community reports...</div>
+                </div>
+                <button class="btn-feedback" id="btn-report-concern">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Report a Concern
+                </button>
+            </section>
+
+            <section class="timeline-widget" id="timeline-widget">
+                <h2>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    Safety Timeline
+                </h2>
+                <p id="timeline-label" class="timeline-label">20:00 — Night</p>
+                <input type="range" id="timeline-slider" class="timeline-slider" min="0" max="23" value="20">
+                <div class="timeline-labels">
+                    <span>12AM</span><span>4AM</span><span>8AM</span><span>12PM</span><span>4PM</span><span>8PM</span>
+                </div>
+            </section>
+
+            <section class="preferences-panel" id="preferences-panel">
+                <h2 class="pref-header" id="pref-toggle">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    Safety Preferences
+                    <svg class="toggle-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </h2>
+                <div id="pref-content" class="pref-content collapsed">
+                    <div class="slider-group">
+                        <label>
+                            <span class="slider-label"><span class="slider-dot" style="background: #ef4444;"></span>Crime Risk</span>
+                            <span class="slider-value" id="crime-weight-val">30%</span>
+                        </label>
+                        <input type="range" id="crime-weight" min="0" max="1" step="0.05" value="0.30">
+                    </div>
+                    <div class="slider-group">
+                        <label>
+                            <span class="slider-label"><span class="slider-dot" style="background: #fbbf24;"></span>Street Lighting</span>
+                            <span class="slider-value" id="lighting-weight-val">20%</span>
+                        </label>
+                        <input type="range" id="lighting-weight" min="0" max="1" step="0.05" value="0.20">
+                    </div>
+                    <div class="slider-group">
+                        <label>
+                            <span class="slider-label"><span class="slider-dot" style="background: #a78bfa;"></span>Area Isolation</span>
+                            <span class="slider-value" id="isolation-weight-val">20%</span>
+                        </label>
+                        <input type="range" id="isolation-weight" min="0" max="1" step="0.05" value="0.20">
+                    </div>
+                    <div class="slider-group">
+                        <label>
+                            <span class="slider-label"><span class="slider-dot" style="background: #34d399;"></span>Foot Traffic</span>
+                            <span class="slider-value" id="crowd-weight-val">10%</span>
+                        </label>
+                        <input type="range" id="crowd-weight" min="0" max="1" step="0.05" value="0.10">
+                    </div>
+                    <div class="slider-group">
+                        <label>
+                            <span class="slider-label"><span class="slider-dot" style="background: #60a5fa;"></span>Emergency Access</span>
+                            <span class="slider-value" id="emergency-weight-val">10%</span>
+                        </label>
+                        <input type="range" id="emergency-weight" min="0" max="1" step="0.05" value="0.10">
+                    </div>
+                    <div class="slider-group">
+                        <label>
+                            <span class="slider-label"><span class="slider-dot" style="background: #f472b6;"></span>Transit Access</span>
+                            <span class="slider-value" id="transit-weight-val">10%</span>
+                        </label>
+                        <input type="range" id="transit-weight" min="0" max="1" step="0.05" value="0.10">
+                    </div>
+                </div>
+            </section>
+        </aside>
+
+        <div class="map-container">
+            <div id="map"></div>
+
+            <div class="map-legend" id="map-legend">
+                <div class="legend-item"><span class="legend-color" style="background: #f77f00;"></span>Fastest</div>
+                <div class="legend-item"><span class="legend-color" style="background: #06d6a0;"></span>Safest</div>
+                <div class="legend-item"><span class="legend-color" style="background: #9b5de5;"></span>Balanced</div>
+            </div>
+
+            <div class="explanation-sheet" id="explanation-sheet">
+                <div class="sheet-header">
+                    <div class="sheet-title-row">
+                        <span id="route-mode-badge" class="mode-badge safest">Safest Route</span>
+                        <span id="confidence-badge" class="confidence-badge high">High Confidence</span>
+                    </div>
+                    <button class="sheet-close" id="sheet-close">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <p id="explanation-text" class="explanation-text"></p>
+
+                <div class="factor-chart">
+                    <p class="factor-label">Safety Factor Breakdown</p>
+                    <div id="factor-bars"></div>
+                </div>
+
+                <div class="route-stats">
+                    <div class="stat-item">
+                        <span class="stat-value" id="safety-score">—</span>
+                        <span class="stat-label">Safety</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="route-distance">—</span>
+                        <span class="stat-label">Distance</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="route-walk-time">—</span>
+                        <span class="stat-label">Walk Time</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="time-context">—</span>
+                        <span class="stat-label">Context</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+            </div>
+            <p>Computing safe routes...</p>
+        </div>
+    </div>
+
+    <div class="feedback-modal-overlay" id="feedback-modal">
+        <div class="feedback-modal">
+            <div class="feedback-modal-header">
+                <h3>Report a Safety Concern</h3>
+                <button class="feedback-modal-close" id="feedback-modal-close">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="feedback-report-form">
+                <div class="fm-group">
+                    <label for="feedback-zone">Zone</label>
+                    <select id="feedback-zone" required>
+                        <option value="">Select a zone...</option>
+                    </select>
+                </div>
+                <div class="fm-group">
+                    <label for="feedback-type">Concern Type</label>
+                    <select id="feedback-type" required>
+                        <option value="lighting">Lighting Concern</option>
+                        <option value="visibility">Low Visibility</option>
+                        <option value="emergency_access">Emergency Access</option>
+                        <option value="crowd_safety">Crowd Safety</option>
+                        <option value="incident_report">Incident Report</option>
+                    </select>
+                </div>
+                <div class="fm-group">
+                    <label for="feedback-message">Describe your concern</label>
+                    <textarea id="feedback-message" rows="3" placeholder="What did you notice?..." minlength="5" required></textarea>
+                </div>
+                <div class="fm-group">
+                    <label>Severity</label>
+                    <div class="severity-selector">
+                        <label class="sev-option">
+                            <input type="radio" name="severity" value="1" checked>
+                            <span>Minor</span>
+                        </label>
+                        <label class="sev-option">
+                            <input type="radio" name="severity" value="2">
+                            <span>Moderate</span>
+                        </label>
+                        <label class="sev-option">
+                            <input type="radio" name="severity" value="3">
+                            <span>Critical</span>
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" id="feedback-submit-btn">
+                    <span class="btn-text">Submit Report</span>
+                </button>
+            </form>
+            <div class="feedback-submitted" id="feedback-submitted" style="display: none;">
+                <div class="fs-check">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </div>
+                <p>Thank you. Your report strengthens community safety.</p>
+                <p class="fs-sub">Reported concerns influence route recommendations in real time.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="feedback-notification" id="feedback-notification"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="/static/js/search.js"></script>
+    <script src="/static/js/map.js"></script>
+    <script src="/static/js/route.js"></script>
+    <script src="/static/js/explain.js"></script>
+    <script src="/static/js/community.js"></script>
+</body>
+</html>

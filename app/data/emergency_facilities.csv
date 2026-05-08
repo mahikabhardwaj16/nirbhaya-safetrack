@@ -1,0 +1,9 @@
+facility_id,type,lat,lon,name,operational_24h
+F001,police_station,28.612,77.208,CP Police Station,True
+F002,hospital,28.616,77.213,Ram Manohar Lohia Hospital,True
+F003,police_station,28.622,77.219,Parliament Street Police,True
+F004,hospital,28.628,77.216,Dr. RML Hospital,True
+F005,emergency_helpdesk,28.63,77.219,Rajiv Chowk Help Desk,False
+F006,police_station,28.611,77.23,ITO Police Post,False
+F007,hospital,28.614,77.227,Lok Nayak Hospital,True
+F008,emergency_helpdesk,28.624,77.211,Shivaji Stadium Kiosk,True

@@ -1,0 +1,371 @@
+{
+  "nodes": [
+    {
+      "id": "N001",
+      "lat": 28.6139,
+      "lon": 77.209,
+      "zone_id": "Z012",
+      "name": "Connaught Place Junction"
+    },
+    {
+      "id": "N002",
+      "lat": 28.6155,
+      "lon": 77.212,
+      "zone_id": "Z012",
+      "name": "Barakhamba Road"
+    },
+    {
+      "id": "N003",
+      "lat": 28.618,
+      "lon": 77.215,
+      "zone_id": "Z015",
+      "name": "Kasturba Gandhi Marg"
+    },
+    {
+      "id": "N004",
+      "lat": 28.62,
+      "lon": 77.218,
+      "zone_id": "Z015",
+      "name": "Janpath Crossing"
+    },
+    {
+      "id": "N005",
+      "lat": 28.6225,
+      "lon": 77.221,
+      "zone_id": "Z018",
+      "name": "Parliament Street"
+    },
+    {
+      "id": "N006",
+      "lat": 28.625,
+      "lon": 77.224,
+      "zone_id": "Z018",
+      "name": "Mandi House"
+    },
+    {
+      "id": "N007",
+      "lat": 28.627,
+      "lon": 77.227,
+      "zone_id": "Z020",
+      "name": "India Gate Circle"
+    },
+    {
+      "id": "N008",
+      "lat": 28.62,
+      "lon": 77.21,
+      "zone_id": "Z013",
+      "name": "Tolstoy Marg"
+    },
+    {
+      "id": "N009",
+      "lat": 28.6175,
+      "lon": 77.207,
+      "zone_id": "Z013",
+      "name": "Krishna Menon Marg"
+    },
+    {
+      "id": "N010",
+      "lat": 28.615,
+      "lon": 77.204,
+      "zone_id": "Z010",
+      "name": "Patel Chowk"
+    },
+    {
+      "id": "N011",
+      "lat": 28.6125,
+      "lon": 77.201,
+      "zone_id": "Z010",
+      "name": "Udyog Bhawan"
+    },
+    {
+      "id": "N012",
+      "lat": 28.61,
+      "lon": 77.198,
+      "zone_id": "Z008",
+      "name": "Rajpath West"
+    },
+    {
+      "id": "N013",
+      "lat": 28.628,
+      "lon": 77.215,
+      "zone_id": "Z022",
+      "name": "Rajiv Chowk Metro"
+    },
+    {
+      "id": "N014",
+      "lat": 28.63,
+      "lon": 77.218,
+      "zone_id": "Z022",
+      "name": "Paharganj Road"
+    },
+    {
+      "id": "N015",
+      "lat": 28.632,
+      "lon": 77.221,
+      "zone_id": "Z025",
+      "name": "Ramakrishna Ashram Marg"
+    },
+    {
+      "id": "N016",
+      "lat": 28.616,
+      "lon": 77.225,
+      "zone_id": "Z019",
+      "name": "ITO Crossing"
+    },
+    {
+      "id": "N017",
+      "lat": 28.614,
+      "lon": 77.228,
+      "zone_id": "Z019",
+      "name": "Pragati Maidan"
+    },
+    {
+      "id": "N018",
+      "lat": 28.611,
+      "lon": 77.231,
+      "zone_id": "Z021",
+      "name": "Supreme Court"
+    },
+    {
+      "id": "N019",
+      "lat": 28.624,
+      "lon": 77.212,
+      "zone_id": "Z016",
+      "name": "Shivaji Stadium"
+    },
+    {
+      "id": "N020",
+      "lat": 28.626,
+      "lon": 77.209,
+      "zone_id": "Z016",
+      "name": "Patel Road"
+    }
+  ],
+  "edges": [
+    {
+      "id": "E001",
+      "source": "N001",
+      "target": "N002",
+      "distance_m": 340,
+      "road_type": "arterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 2
+    },
+    {
+      "id": "E002",
+      "source": "N002",
+      "target": "N003",
+      "distance_m": 420,
+      "road_type": "arterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 3
+    },
+    {
+      "id": "E003",
+      "source": "N003",
+      "target": "N004",
+      "distance_m": 310,
+      "road_type": "subarterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 1
+    },
+    {
+      "id": "E004",
+      "source": "N004",
+      "target": "N005",
+      "distance_m": 290,
+      "road_type": "arterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 2
+    },
+    {
+      "id": "E005",
+      "source": "N005",
+      "target": "N006",
+      "distance_m": 380,
+      "road_type": "arterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 4
+    },
+    {
+      "id": "E006",
+      "source": "N006",
+      "target": "N007",
+      "distance_m": 270,
+      "road_type": "subarterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 1
+    },
+    {
+      "id": "E007",
+      "source": "N001",
+      "target": "N008",
+      "distance_m": 520,
+      "road_type": "subarterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 1
+    },
+    {
+      "id": "E008",
+      "source": "N008",
+      "target": "N009",
+      "distance_m": 350,
+      "road_type": "local",
+      "has_streetlight": false,
+      "transit_stops_nearby": 0
+    },
+    {
+      "id": "E009",
+      "source": "N009",
+      "target": "N010",
+      "distance_m": 380,
+      "road_type": "arterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 2
+    },
+    {
+      "id": "E010",
+      "source": "N010",
+      "target": "N011",
+      "distance_m": 310,
+      "road_type": "arterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 1
+    },
+    {
+      "id": "E011",
+      "source": "N011",
+      "target": "N012",
+      "distance_m": 450,
+      "road_type": "subarterial",
+      "has_streetlight": false,
+      "transit_stops_nearby": 0
+    },
+    {
+      "id": "E012",
+      "source": "N001",
+      "target": "N013",
+      "distance_m": 480,
+      "road_type": "arterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 5
+    },
+    {
+      "id": "E013",
+      "source": "N013",
+      "target": "N014",
+      "distance_m": 290,
+      "road_type": "subarterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 2
+    },
+    {
+      "id": "E014",
+      "source": "N014",
+      "target": "N015",
+      "distance_m": 360,
+      "road_type": "local",
+      "has_streetlight": false,
+      "transit_stops_nearby": 0
+    },
+    {
+      "id": "E015",
+      "source": "N002",
+      "target": "N016",
+      "distance_m": 540,
+      "road_type": "arterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 3
+    },
+    {
+      "id": "E016",
+      "source": "N016",
+      "target": "N017",
+      "distance_m": 320,
+      "road_type": "subarterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 1
+    },
+    {
+      "id": "E017",
+      "source": "N017",
+      "target": "N018",
+      "distance_m": 410,
+      "road_type": "subarterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 1
+    },
+    {
+      "id": "E018",
+      "source": "N003",
+      "target": "N019",
+      "distance_m": 370,
+      "road_type": "arterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 3
+    },
+    {
+      "id": "E019",
+      "source": "N019",
+      "target": "N020",
+      "distance_m": 260,
+      "road_type": "local",
+      "has_streetlight": false,
+      "transit_stops_nearby": 0
+    },
+    {
+      "id": "E020",
+      "source": "N020",
+      "target": "N014",
+      "distance_m": 430,
+      "road_type": "subarterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 1
+    },
+    {
+      "id": "E021",
+      "source": "N004",
+      "target": "N006",
+      "distance_m": 350,
+      "road_type": "arterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 2
+    },
+    {
+      "id": "E022",
+      "source": "N007",
+      "target": "N018",
+      "distance_m": 490,
+      "road_type": "subarterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 0
+    },
+    {
+      "id": "E023",
+      "source": "N005",
+      "target": "N013",
+      "distance_m": 310,
+      "road_type": "arterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 3
+    },
+    {
+      "id": "E024",
+      "source": "N009",
+      "target": "N019",
+      "distance_m": 440,
+      "road_type": "local",
+      "has_streetlight": false,
+      "transit_stops_nearby": 0
+    },
+    {
+      "id": "E025",
+      "source": "N016",
+      "target": "N007",
+      "distance_m": 380,
+      "road_type": "arterial",
+      "has_streetlight": true,
+      "transit_stops_nearby": 2
+    }
+  ]
+}

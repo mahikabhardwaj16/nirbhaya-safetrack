@@ -1,0 +1,13 @@
+zone_id,lighting_score,crowd_density_day,crowd_density_night,isolation_index,emergency_facility_within_500m,transit_accessibility
+Z012,0.9,0.95,0.6,0.05,True,0.95
+Z015,0.85,0.85,0.4,0.15,True,0.85
+Z018,0.9,0.7,0.2,0.25,True,0.8
+Z020,0.7,0.8,0.3,0.4,False,0.4
+Z013,0.5,0.5,0.2,0.55,False,0.5
+Z010,0.75,0.6,0.15,0.35,True,0.7
+Z008,0.3,0.3,0.05,0.85,False,0.1
+Z022,0.9,0.9,0.5,0.1,True,0.95
+Z025,0.4,0.6,0.2,0.7,False,0.3
+Z019,0.6,0.7,0.15,0.45,False,0.5
+Z021,0.5,0.4,0.1,0.65,True,0.3
+Z016,0.7,0.65,0.25,0.35,True,0.75
