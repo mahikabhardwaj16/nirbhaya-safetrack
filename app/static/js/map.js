@@ -15,9 +15,9 @@ let emergencyFacilities = [];
 let safetyIntelligence = null;
 
 const ROUTE_STYLES = {
-    fastest: { color: '#f77f00', weight: 7, opacity: 1, dashArray: '12, 10' },
-    safest: { color: '#06d6a0', weight: 9, opacity: 1, dashArray: null },
-    balanced: { color: '#9b5de5', weight: 8, opacity: 1, dashArray: null },
+    fastest: { color: '#f59e0b', glow: 'rgba(245, 158, 11, 0.25)' },
+    safest: { color: '#10b981', glow: 'rgba(16, 185, 129, 0.25)' },
+    balanced: { color: '#8b5cf6', glow: 'rgba(139, 92, 246, 0.25)' },
 };
 
 let zoneSafetyData = {};
@@ -28,13 +28,13 @@ function initMap() {
 
     L.control.zoom({ position: 'topright' }).addTo(map);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
         maxZoom: 19,
         subdomains: 'abcd',
     }).addTo(map);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', {
         maxZoom: 19, subdomains: 'abcd', pane: 'overlayPane',
     }).addTo(map);
 }
@@ -61,7 +61,10 @@ function setDestMarker(node) {
 }
 
 function clearRoutes() {
-    Object.values(routeLayers).forEach(l => map.removeLayer(l));
+    Object.values(routeLayers).forEach(layers => {
+        if (layers.glow) map.removeLayer(layers.glow);
+        if (layers.base) map.removeLayer(layers.base);
+    });
     routeLayers = {};
     clearSegmentRisks();
 }
@@ -71,10 +74,8 @@ function clearSegmentRisks() {
     segmentRiskLayers = [];
 }
 
-function drawRoute(coordinates, mode) {
+function parseCoordsToLatLngs(coordinates) {
     if (!coordinates || coordinates.length < 2) return null;
-    const style = ROUTE_STYLES[mode] || ROUTE_STYLES.balanced;
-
     const latlngs = [];
     for (var i = 0; i < coordinates.length; i++) {
         var c = coordinates[i];
@@ -84,33 +85,58 @@ function drawRoute(coordinates, mode) {
         }
         latlngs.push([c.lat, c.lon]);
     }
-    console.log('[Map]', mode, 'latlngs:', JSON.stringify(latlngs.slice(0, 10)));
-    const line = L.polyline(latlngs, {
-        color: style.color, weight: style.weight, opacity: 1,
-        lineCap: 'round', lineJoin: 'round', dashArray: style.dashArray,
-    }).addTo(map);
-    routeLayers[mode] = line;
-    line.bindTooltip(mode.charAt(0).toUpperCase() + mode.slice(1) + ' Route', { sticky: true });
+    return latlngs;
+}
 
-    return line;
+function drawRoute(coordinates, mode) {
+    const latlngs = parseCoordsToLatLngs(coordinates);
+    if (!latlngs) return null;
+
+    const style = ROUTE_STYLES[mode] || ROUTE_STYLES.balanced;
+
+    const glowLine = L.polyline(latlngs, {
+        color: style.glow,
+        weight: 14,
+        opacity: 0.3,
+        lineCap: 'round',
+        lineJoin: 'round',
+        interactive: false,
+    }).addTo(map);
+
+    const baseLine = L.polyline(latlngs, {
+        color: style.color,
+        weight: 4,
+        opacity: 1,
+        lineCap: 'round',
+        lineJoin: 'round',
+    }).addTo(map);
+
+    routeLayers[mode] = { glow: glowLine, base: baseLine };
+    baseLine.bindTooltip(mode.charAt(0).toUpperCase() + mode.slice(1) + ' Route', { sticky: true });
+
+    return baseLine;
 }
 
 function highlightRoute(mode) {
-    Object.entries(routeLayers).forEach(([m, layer]) => {
-        const style = ROUTE_STYLES[m] || ROUTE_STYLES.balanced;
+    Object.entries(routeLayers).forEach(([m, layers]) => {
+        if (!layers.base || !layers.glow) return;
         if (m === mode) {
-            layer.setStyle({ weight: style.weight + 2, opacity: 1 });
-            layer.bringToFront();
+            layers.base.setStyle({ weight: 5.5, opacity: 1 });
+            layers.glow.setStyle({ weight: 16, opacity: 0.4 });
+            layers.base.bringToFront();
+            layers.glow.bringToFront();
         } else {
-            layer.setStyle({ weight: style.weight - 1, opacity: 0.35 });
+            layers.base.setStyle({ weight: 2.5, opacity: 0.3 });
+            layers.glow.setStyle({ weight: 8, opacity: 0.08 });
         }
     });
 }
 
 function resetRouteHighlights() {
-    Object.entries(routeLayers).forEach(([m, layer]) => {
-        const style = ROUTE_STYLES[m] || ROUTE_STYLES.balanced;
-        layer.setStyle({ weight: style.weight, opacity: 1 });
+    Object.entries(routeLayers).forEach(([m, layers]) => {
+        if (!layers.base || !layers.glow) return;
+        layers.base.setStyle({ weight: 4, opacity: 1 });
+        layers.glow.setStyle({ weight: 14, opacity: 0.3 });
     });
 }
 
@@ -248,9 +274,9 @@ function getHeatmapColor(score) {
 }
 
 function fitMapToRoutes() {
-    const layers = Object.values(routeLayers);
-    if (!layers.length) return;
-    map.fitBounds(L.featureGroup(layers).getBounds().pad(0.12));
+    const allLayers = Object.values(routeLayers).map(l => l.base).filter(Boolean);
+    if (!allLayers.length) return;
+    map.fitBounds(L.featureGroup(allLayers).getBounds().pad(0.12));
 }
 
 let checkpointsVisible = false;
@@ -368,6 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(() => {});
 
         setTimeout(() => {
+            dismissHero();
             runDemoRoute('N001', 'N007', null);
         }, 500);
     });

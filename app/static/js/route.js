@@ -71,6 +71,7 @@ function showToast(message, type) {
 }
 
 function computeRoutes() {
+    if (typeof dismissHero === 'function') dismissHero();
     const origin = document.getElementById('origin').value;
     const destination = document.getElementById('destination').value;
     const time = document.getElementById('departure-time').value;
@@ -289,6 +290,9 @@ function showRouteSummary(data) {
                     <div class="summary-stat">\
                         <span class="summary-stat-value" style="color: ' + safetyColor + ';">' + safetyPct + '%</span>\
                         <span class="summary-stat-unit">safe</span>\
+                        <div class="safety-bar-mini" style="width: 28px;">\
+                            <div class="safety-bar-fill" style="width: ' + safetyPct + '%; background: ' + safetyColor + ';"></div>\
+                        </div>\
                     </div>\
                     <div class="summary-stat">\
                         <span class="summary-stat-value">' + walkTime + '</span>\
@@ -486,6 +490,7 @@ function selectNodeById(nodeId, fieldId) {
 }
 
 function runDemoRoute(originId, destId, chipEl) {
+    if (typeof dismissHero === 'function') dismissHero();
     document.querySelectorAll('.demo-chip').forEach(function (c) { return c.classList.remove('active'); });
     if (chipEl) chipEl.classList.add('active');
 

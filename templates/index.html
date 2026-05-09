@@ -8,15 +8,41 @@
     <link rel="stylesheet" href="/static/css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
+    <!-- ===== HERO SECTION (visible on first load) ===== -->
+    <section id="hero-section" class="hero-section visible">
+        <div class="hero-badge">
+            <span>AI-Powered Safety</span>
+        </div>
+        <h1 class="hero-title">Navigate Safely.<br>Arrive Confidently.</h1>
+        <p class="hero-subtitle">
+            Nirbhaya SafeTrack analyzes real-time safety factors — lighting, crowd density, 
+            emergency access, and community reports — to find the safest route through the city.
+        </p>
+        <div class="hero-actions">
+            <button class="btn-hero primary" onclick="dismissHero()">
+                <i data-lucide="compass" size="16"></i>
+                Get Started
+            </button>
+            <button class="btn-hero secondary" onclick="dismissHero(); runDemoRoute('N001', 'N007', null)">
+                <i data-lucide="zap" size="16"></i>
+                Quick Demo
+            </button>
+        </div>
+    </section>
+
+    <!-- ===== TOP NAVBAR ===== -->
     <header class="app-header">
         <div class="logo">
             <div class="logo-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    <path d="M9 12l2 2 4-4"/>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2C8.5 2 6 4.8 6 8c0 5 6 12 6 12s6-7 6-12c0-3.2-2.5-6-6-6z"/>
+                    <circle cx="12" cy="8" r="1.5" fill="white" stroke="none"/>
+                    <path d="M12 8 L9 13"/>
+                    <path d="M12 8 L15 13"/>
                 </svg>
             </div>
             <div class="logo-text">
@@ -26,36 +52,29 @@
         </div>
         <div class="header-actions">
             <span class="prototype-badge" title="Uses simulated urban safety datasets for demonstration">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
-                </svg>
+                <i data-lucide="info" size="10"></i>
                 Prototype
             </span>
             <button id="toggle-checkpoints" class="btn-ghost">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                </svg>
-                Checkpoints
+                <i data-lucide="shield" size="14"></i>
+                <span>Checkpoints</span>
             </button>
             <button id="toggle-heatmap" class="btn-ghost">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-                    <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-                </svg>
-                Heatmap
+                <i data-lucide="grid" size="14"></i>
+                <span>Heatmap</span>
             </button>
         </div>
     </header>
 
+    <!-- ===== TIME CONTEXT BAR ===== -->
     <div id="time-context-bar" class="time-context-bar">
         <span class="time-context-icon">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-            </svg>
+            <i data-lucide="moon" size="12"></i>
         </span>
         <span id="time-context-text" class="time-context-text"></span>
     </div>
 
+    <!-- ===== SAFETY INTELLIGENCE BAR ===== -->
     <div id="safety-intelligence-bar" class="safety-intelligence-bar" style="display: none;">
         <span class="si-pulse"></span>
         <span class="si-label">Safety Engine Active</span>
@@ -69,13 +88,14 @@
         <span class="si-stat" id="si-period">Evening conditions</span>
     </div>
 
+    <!-- ===== MAIN LAYOUT ===== -->
     <main class="app-layout">
+        <!-- ===== SIDEBAR ===== -->
         <aside class="sidebar">
+            <!-- Input Panel -->
             <section class="input-panel">
-                <h2>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-                    </svg>
+                <h2 class="panel-title">
+                    <i data-lucide="map-pin" size="14" stroke-width="2"></i>
                     Plan Your Route
                 </h2>
                 <form id="route-form">
@@ -106,21 +126,21 @@
                                 <label class="mode-option">
                                     <input type="radio" name="mode" value="fastest">
                                     <span class="mode-label">
-                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                                        <i data-lucide="zap" size="10"></i>
                                         Fastest
                                     </span>
                                 </label>
                                 <label class="mode-option">
                                     <input type="radio" name="mode" value="safest" checked>
                                     <span class="mode-label">
-                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                        <i data-lucide="shield" size="10"></i>
                                         Safest
                                     </span>
                                 </label>
                                 <label class="mode-option">
                                     <input type="radio" name="mode" value="balanced">
                                     <span class="mode-label">
-                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                        <i data-lucide="scale" size="10"></i>
                                         Balanced
                                     </span>
                                 </label>
@@ -145,23 +165,22 @@
                 </form>
             </section>
 
+            <!-- Route Summary -->
             <section id="route-summary" class="route-summary" style="display: none;">
-                <h2>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-                    </svg>
+                <h2 class="panel-title">
+                    <i data-lucide="route" size="14" stroke-width="2"></i>
                     Route Comparison
                 </h2>
                 <div id="route-summary-content" class="summary-cards"></div>
             </section>
 
+            <!-- Why-Not Panel -->
             <div id="why-not-panel" class="why-not-panel" style="display: none;"></div>
 
+            <!-- Community Pulse -->
             <section class="community-feedback" id="community-feedback">
-                <h2>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                    </svg>
+                <h2 class="panel-title">
+                    <i data-lucide="users" size="14" stroke-width="2"></i>
                     Community Pulse
                     <span class="feedback-live-dot"></span>
                 </h2>
@@ -179,18 +198,15 @@
                     <div class="feedback-empty">Loading community reports...</div>
                 </div>
                 <button class="btn-feedback" id="btn-report-concern">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
+                    <i data-lucide="plus" size="12" stroke-width="2.5"></i>
                     Report a Concern
                 </button>
             </section>
 
+            <!-- Safety Timeline -->
             <section class="timeline-widget" id="timeline-widget">
-                <h2>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                    </svg>
+                <h2 class="panel-title">
+                    <i data-lucide="clock" size="14" stroke-width="2"></i>
                     Safety Timeline
                 </h2>
                 <p id="timeline-label" class="timeline-label">20:00 — Night</p>
@@ -200,11 +216,10 @@
                 </div>
             </section>
 
+            <!-- Safety Preferences -->
             <section class="preferences-panel" id="preferences-panel">
-                <h2 class="pref-header" id="pref-toggle">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                    </svg>
+                <h2 class="pref-header panel-title" id="pref-toggle">
+                    <i data-lucide="sliders" size="14" stroke-width="2"></i>
                     Safety Preferences
                     <svg class="toggle-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="6 9 12 15 18 9"/>
@@ -257,15 +272,27 @@
             </section>
         </aside>
 
+        <!-- ===== MAP CONTAINER ===== -->
         <div class="map-container">
             <div id="map"></div>
 
+            <!-- Map Legend -->
             <div class="map-legend" id="map-legend">
-                <div class="legend-item"><span class="legend-color" style="background: #f77f00;"></span>Fastest</div>
-                <div class="legend-item"><span class="legend-color" style="background: #06d6a0;"></span>Safest</div>
-                <div class="legend-item"><span class="legend-color" style="background: #9b5de5;"></span>Balanced</div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background: #fbbf24;"></span>
+                    Fastest
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background: #10b981;"></span>
+                    Safest
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background: #8b5cf6;"></span>
+                    Balanced
+                </div>
             </div>
 
+            <!-- Explanation Sheet -->
             <div class="explanation-sheet" id="explanation-sheet">
                 <div class="sheet-header">
                     <div class="sheet-title-row">
@@ -273,9 +300,7 @@
                         <span id="confidence-badge" class="confidence-badge high">High Confidence</span>
                     </div>
                     <button class="sheet-close" id="sheet-close">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
+                        <i data-lucide="x" size="16"></i>
                     </button>
                 </div>
 
@@ -308,6 +333,7 @@
         </div>
     </main>
 
+    <!-- ===== LOADING OVERLAY ===== -->
     <div class="loading-overlay" id="loading-overlay">
         <div class="loading-content">
             <div class="loading-spinner">
@@ -319,14 +345,13 @@
         </div>
     </div>
 
+    <!-- ===== FEEDBACK MODAL ===== -->
     <div class="feedback-modal-overlay" id="feedback-modal">
         <div class="feedback-modal">
             <div class="feedback-modal-header">
                 <h3>Report a Safety Concern</h3>
                 <button class="feedback-modal-close" id="feedback-modal-close">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
+                    <i data-lucide="x" size="16"></i>
                 </button>
             </div>
             <form id="feedback-report-form">
@@ -373,9 +398,7 @@
             </form>
             <div class="feedback-submitted" id="feedback-submitted" style="display: none;">
                 <div class="fs-check">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-                    </svg>
+                    <i data-lucide="check-circle" size="32" style="color: var(--primary);"></i>
                 </div>
                 <p>Thank you. Your report strengthens community safety.</p>
                 <p class="fs-sub">Reported concerns influence route recommendations in real time.</p>
@@ -383,9 +406,24 @@
         </div>
     </div>
 
+    <!-- ===== NOTIFICATION TOAST CONTAINER ===== -->
     <div class="feedback-notification" id="feedback-notification"></div>
 
+    <!-- ===== GLOBALS ===== -->
+    <script>
+    function dismissHero() {
+        var hero = document.getElementById('hero-section');
+        if (hero) hero.classList.remove('visible');
+    }
+    </script>
+
+    <!-- ===== SCRIPTS ===== -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
+    </script>
     <script src="/static/js/search.js"></script>
     <script src="/static/js/map.js"></script>
     <script src="/static/js/route.js"></script>
