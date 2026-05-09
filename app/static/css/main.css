@@ -444,51 +444,66 @@ body { display: flex; flex-direction: column; height: 100vh; }
 }
 
 /* ===== MODE SELECTOR ===== */
-.mode-selector { display: flex; gap: 4px; }
+/* ===== MODE SELECTOR FIX ===== */
+.mode-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 4px;
+  width: 100%;
+}
 
-.mode-option { flex: 1; min-width: 0; cursor: pointer; }
+.mode-option {
+  min-width: 0;
+  width: 100%;
+  cursor: pointer;
+}
 .mode-option input[type="radio"] { display: none; }
 
 .mode-label {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 3px;
-  padding: 8px 2px;
-  font-size: 0.62rem;
-  font-weight: 500;
+  padding: 6px 4px;
+  font-size: 0.60rem;
+  font-weight: 600;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  width: 100%;
   background: var(--bg-3);
   border: 1px solid var(--br-2);
   color: var(--tx-3);
   border-radius: var(--r-sm);
   cursor: pointer;
   transition: all 0.15s ease;
+  box-sizing: border-box;
 }
 
-.mode-label:hover { background: var(--bg-4); color: var(--tx-2); }
+.mode-label svg {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
+}
 
 .mode-option:has(input[value="fastest"]) input:checked + .mode-label {
   border-color: var(--route-fastest);
-  background: rgba(245, 158, 11, 0.08);
+  background: rgba(245,158,11,0.08);
   color: var(--route-fastest);
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.15);
+  box-shadow: 0 0 10px rgba(245,158,11,0.15);
 }
 
 .mode-option:has(input[value="safest"]) input:checked + .mode-label {
   border-color: var(--route-safest);
-  background: rgba(0, 200, 150, 0.08);
+  background: rgba(0,200,150,0.08);
   color: var(--route-safest);
-  box-shadow: 0 0 12px rgba(0, 200, 150, 0.15);
+  box-shadow: 0 0 10px rgba(0,200,150,0.15);
 }
 
 .mode-option:has(input[value="balanced"]) input:checked + .mode-label {
   border-color: var(--route-balanced);
-  background: rgba(129, 140, 248, 0.08);
+  background: rgba(129,140,248,0.08);
   color: var(--route-balanced);
-  box-shadow: 0 0 12px rgba(129, 140, 248, 0.15);
+  box-shadow: 0 0 10px rgba(129,140,248,0.15);
 }
 
 /* ===== BUTTONS ===== */
