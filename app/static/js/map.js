@@ -394,7 +394,6 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(() => {});
 
         setTimeout(() => {
-            dismissHero();
             runDemoRoute('N001', 'N007', null);
         }, 500);
     });

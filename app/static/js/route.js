@@ -71,7 +71,6 @@ function showToast(message, type) {
 }
 
 function computeRoutes() {
-    if (typeof dismissHero === 'function') dismissHero();
     const origin = document.getElementById('origin').value;
     const destination = document.getElementById('destination').value;
     const time = document.getElementById('departure-time').value;
@@ -490,7 +489,6 @@ function selectNodeById(nodeId, fieldId) {
 }
 
 function runDemoRoute(originId, destId, chipEl) {
-    if (typeof dismissHero === 'function') dismissHero();
     document.querySelectorAll('.demo-chip').forEach(function (c) { return c.classList.remove('active'); });
     if (chipEl) chipEl.classList.add('active');
 

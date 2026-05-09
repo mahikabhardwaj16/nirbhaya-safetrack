@@ -12,28 +12,6 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <!-- ===== HERO SECTION (visible on first load) ===== -->
-    <section id="hero-section" class="hero-section visible">
-        <div class="hero-badge">
-            <span>AI-Powered Safety</span>
-        </div>
-        <h1 class="hero-title">Navigate Safely.<br>Arrive Confidently.</h1>
-        <p class="hero-subtitle">
-            Nirbhaya SafeTrack analyzes real-time safety factors — lighting, crowd density, 
-            emergency access, and community reports — to find the safest route through the city.
-        </p>
-        <div class="hero-actions">
-            <button class="btn-hero primary" onclick="dismissHero()">
-                <i data-lucide="compass" size="16"></i>
-                Get Started
-            </button>
-            <button class="btn-hero secondary" onclick="dismissHero(); runDemoRoute('N001', 'N007', null)">
-                <i data-lucide="zap" size="16"></i>
-                Quick Demo
-            </button>
-        </div>
-    </section>
-
     <!-- ===== TOP NAVBAR ===== -->
     <header class="app-header">
         <div class="logo">
@@ -408,14 +386,6 @@
 
     <!-- ===== NOTIFICATION TOAST CONTAINER ===== -->
     <div class="feedback-notification" id="feedback-notification"></div>
-
-    <!-- ===== GLOBALS ===== -->
-    <script>
-    function dismissHero() {
-        var hero = document.getElementById('hero-section');
-        if (hero) hero.classList.remove('visible');
-    }
-    </script>
 
     <!-- ===== SCRIPTS ===== -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
