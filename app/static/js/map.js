@@ -3,21 +3,16 @@
 let map;
 let nodeMarkers = [];
 let routeLayers = {};
-let routeGlowLayers = {};
 let heatmapLayer = null;
 let heatmapZoneLayers = [];
 let originMarker = null;
 let destMarker = null;
 let segmentRiskLayers = [];
 let emergencyMarkers = [];
-let checkpointMarkers = [];
 
 let segmentRiskData = [];
 let emergencyFacilities = [];
 let safetyIntelligence = null;
-
-let previousRouteCoords = {};
-let routeTransitionTimeout = null;
 
 const ROUTE_STYLES = {
     fastest: { color: '#f77f00', weight: 7, opacity: 1, dashArray: '12, 10' },
@@ -67,10 +62,7 @@ function setDestMarker(node) {
 
 function clearRoutes() {
     Object.values(routeLayers).forEach(l => map.removeLayer(l));
-    Object.values(routeGlowLayers).forEach(l => map.removeLayer(l));
     routeLayers = {};
-    routeGlowLayers = {};
-    previousRouteCoords = {};
     clearSegmentRisks();
 }
 
@@ -83,7 +75,6 @@ function drawRoute(coordinates, mode) {
     if (!coordinates || coordinates.length < 2) return null;
     const style = ROUTE_STYLES[mode] || ROUTE_STYLES.balanced;
 
-    // Build latlngs as [lat, lon] — verify both keys are present
     const latlngs = [];
     for (var i = 0; i < coordinates.length; i++) {
         var c = coordinates[i];
@@ -93,9 +84,7 @@ function drawRoute(coordinates, mode) {
         }
         latlngs.push([c.lat, c.lon]);
     }
-    previousRouteCoords[mode] = latlngs;
-
-    // TEMP: Single plain polyline — no glow layers, no animations
+    console.log('[Map]', mode, 'latlngs:', JSON.stringify(latlngs.slice(0, 10)));
     const line = L.polyline(latlngs, {
         color: style.color, weight: style.weight, opacity: 1,
         lineCap: 'round', lineJoin: 'round', dashArray: style.dashArray,
@@ -106,24 +95,14 @@ function drawRoute(coordinates, mode) {
     return line;
 }
 
-function animateRouteDraw(polyline, glowMid, glowOuter) {
-    polyline.setStyle({ opacity: 1 });
-    if (glowMid) glowMid.setStyle({ opacity: 0.1 });
-    if (glowOuter) glowOuter.setStyle({ opacity: 0.2 });
-}
-
 function highlightRoute(mode) {
     Object.entries(routeLayers).forEach(([m, layer]) => {
         const style = ROUTE_STYLES[m] || ROUTE_STYLES.balanced;
         if (m === mode) {
             layer.setStyle({ weight: style.weight + 2, opacity: 1 });
             layer.bringToFront();
-            if (routeGlowLayers[m]) routeGlowLayers[m].setStyle({ opacity: 0.3 });
-            if (routeGlowLayers[m + '_mid']) routeGlowLayers[m + '_mid'].setStyle({ opacity: 0.18 });
         } else {
             layer.setStyle({ weight: style.weight - 1, opacity: 0.35 });
-            if (routeGlowLayers[m]) routeGlowLayers[m].setStyle({ opacity: 0.06 });
-            if (routeGlowLayers[m + '_mid']) routeGlowLayers[m + '_mid'].setStyle({ opacity: 0.03 });
         }
     });
 }
@@ -132,23 +111,6 @@ function resetRouteHighlights() {
     Object.entries(routeLayers).forEach(([m, layer]) => {
         const style = ROUTE_STYLES[m] || ROUTE_STYLES.balanced;
         layer.setStyle({ weight: style.weight, opacity: 1 });
-        if (routeGlowLayers[m]) routeGlowLayers[m].setStyle({ opacity: 0.2, weight: style.weight + 20 });
-        if (routeGlowLayers[m + '_mid']) routeGlowLayers[m + '_mid'].setStyle({ opacity: 0.1, weight: style.weight + 10 });
-    });
-}
-
-function updateRouteColors(scores) {
-    Object.entries(scores).forEach(([mode, score]) => {
-        const line = routeLayers[mode];
-        const glow = routeGlowLayers[mode];
-        const glowMid = routeGlowLayers[mode + '_mid'];
-        if (!line) return;
-        const r = Math.round(score * 220);
-        const g = Math.round((1 - score) * 200);
-        const color = `rgb(${r},${g},60)`;
-        line.setStyle({ color, opacity: 1 });
-        if (glow) glow.setStyle({ color, opacity: 0.2 });
-        if (glowMid) glowMid.setStyle({ color, opacity: 0.1 });
     });
 }
 

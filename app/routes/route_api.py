@@ -95,6 +95,8 @@ def compute_route():
                 is_night = hour >= 20 or hour < 6
                 is_low_vis = seg_score > 0.4 and is_night and za.get("lighting_score", 0.5) < 0.4
 
+                u_data = graph.nodes[u]
+                v_data = graph.nodes[v]
                 segment_risks.append({
                     "node_id": u,
                     "name": node_names.get(u, u),
@@ -104,6 +106,10 @@ def compute_route():
                     "is_low_visibility": is_low_vis,
                     "lighting_score": za.get("lighting_score", 0.5),
                     "isolation_index": za.get("isolation_index", 0.5),
+                    "lat_start": u_data.get("lat"),
+                    "lon_start": u_data.get("lon"),
+                    "lat_end": v_data.get("lat"),
+                    "lon_end": v_data.get("lon"),
                 })
 
                 breakdown = get_factor_breakdown(edge_data, za, datasets["crime_incidents"], hour, user_preferences)
