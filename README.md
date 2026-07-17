@@ -7,7 +7,7 @@
 ![Flask](https://img.shields.io/badge/flask-3.0-lightgrey.svg)
 
 ## 🌐 Live Demo
-https://web-production-e1a63.up.railway.app
+
 ---
 
 ## The Problem
